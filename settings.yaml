@@ -1,0 +1,5 @@
+default:
+  SQLALCHEMY_DATABASE_URI: 'sqlite:///foo.db'
+development:  
+production:
+  
