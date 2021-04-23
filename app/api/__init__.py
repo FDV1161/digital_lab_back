@@ -1,5 +1,4 @@
-from flask import Blueprint
+from .room import bp as room_bp
 
-bp = Blueprint('api', __name__)
 
-from . import routers
+

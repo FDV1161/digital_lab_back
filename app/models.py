@@ -1,4 +1,4 @@
-from app import db
+from database import db
 from datetime import datetime
 from sqla_softdelete import SoftDeleteMixin
 from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey
@@ -69,6 +69,8 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     address = Column(Integer)
     description = Column(Text)
     device_id = Column(ForeignKey("device.id"))
+    room_id = Column(ForeignKey("room.id"))
+    measure_id = Column(ForeignKey("measure.id"))
 
 
 class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
@@ -85,7 +87,11 @@ class Function(SoftDeleteMixin, TimestampMixin, db.Model):
     __table_args__ = {"comment": "Функции оборудования"}
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
+    name = Column(String, nullable=False)
+    min_value = Column(Integer)
+    max_value = Column(Integer)
+    current_value = Column(Integer)
+    sensor_id = Column(ForeignKey("sensor.id"))
 
 
 class Measure(SoftDeleteMixin, TimestampMixin, db.Model):
@@ -103,19 +109,3 @@ class GroupPermission(db.Model):
     id = Column(Integer, primary_key=True)
     group_id = Column(Integer, ForeignKey('group.id'))
     permission_id = Column(Integer, ForeignKey('permission.id'))
-
-
-class RoomSensor(db.Model):
-    __tablename__ = 'room__sensor'
-
-    id = Column(Integer, primary_key=True)
-    sensor_id = Column(Integer, ForeignKey('sensor.id'))
-    room_id = Column(Integer, ForeignKey('room.id'))
-
-
-class DeviceFunction(db.Model):
-    __tablename__ = 'device__function'
-
-    id = Column(Integer, primary_key=True)
-    device_id = Column(Integer, ForeignKey('device.id'))
-    function_id = Column(Integer, ForeignKey('function.id'))

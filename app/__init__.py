@@ -1,5 +1,5 @@
 from .errors import bp as errors_bp
-from .api import bp as api_bp
+from .api import room_bp
 from flask import Flask
 from dynaconf import FlaskDynaconf
 
@@ -22,4 +22,4 @@ manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
 app.register_blueprint(errors_bp)
-app.register_blueprint(api_bp, url_prefix='/api')
+app.register_blueprint(room_bp)
