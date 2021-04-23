@@ -1,7 +1,7 @@
 from database import db
 from datetime import datetime
 from sqla_softdelete import SoftDeleteMixin
-from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey
+from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey, Boolean
 
 
 class TimestampMixin:
@@ -68,6 +68,7 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     name = Column(String, nullable=False, unique=True)
     address = Column(Integer)
     description = Column(Text)
+    on_home = Column(Boolean)
     device_id = Column(ForeignKey("device.id"))
     room_id = Column(ForeignKey("room.id"))
     measure_id = Column(ForeignKey("measure.id"))
