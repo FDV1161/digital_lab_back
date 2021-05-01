@@ -1,14 +1,11 @@
 from pydantic import BaseModel
 from typing import List
-
-
-class OrmBaseModel(BaseModel):
-    class Config:
-        orm_mode = True
+from app.api.base.shemas import OrmBaseModel
+from app.api.sensor.shemas import SensorList
 
 
 class RoomIn(OrmBaseModel):
-    name: str 
+    name: str
     description: str
 
 
@@ -16,8 +13,10 @@ class RoomOut(RoomIn):
     id: int
 
 
-# class RoomList(OrmBaseModel):
-#     object_list = List[RoomOut]
+class RoomDetailOut(RoomIn):
+    id: int
+    sensor_list: SensorList
+
 
 class RoomList(OrmBaseModel):
     __root__: List[RoomOut]

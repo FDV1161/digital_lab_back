@@ -2,7 +2,7 @@ from flask import Flask, request, Blueprint
 from flask_pydantic import validate
 from database import session
 from app.models import Room
-from .shemas import RoomIn, RoomOut, RoomList
+from .shemas import RoomIn, RoomOut, RoomList, RoomDetailOut
 from app.errors.Exception import NotFoundException
 
 bp = Blueprint('room', __name__)
@@ -21,7 +21,7 @@ def get_room(item_id: int):
     room = session.query(Room).get(item_id)
     if not room:
         raise NotFoundException
-    return RoomOut.from_orm(room)
+    return RoomDetailOut.from_orm(room)
 
 # TODO проверка на уникальность
 

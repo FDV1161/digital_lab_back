@@ -78,6 +78,7 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     measure_id = Column(ForeignKey("measure.id"))
 
     room =  relationship("Room", back_populates="sensor_list")
+    measure = relationship("Measure")
 
 
 class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
