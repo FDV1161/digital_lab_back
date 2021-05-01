@@ -8,7 +8,7 @@ from app.errors.Exception import NotFoundException
 bp = Blueprint('room', __name__)
 
 
-@bp.route("/", methods=["get"])
+@bp.route("", methods=["get"])
 @validate()
 def get_rooms():
     rooms = session.query(Room).all()
@@ -23,14 +23,18 @@ def get_room(item_id: int):
         raise NotFoundException
     return RoomOut.from_orm(room)
 
+# TODO проверка на уникальность
 
-@bp.route("/", methods=["post"])
+
+@bp.route("", methods=["post"])
 @validate()
-def create_room(body: RoomIn):    
+def create_room(body: RoomIn):
     room = Room(**body.dict())
     session.add(room)
     session.commit()
     return RoomOut.from_orm(room)
+
+# TODO проверка на уникальность
 
 
 @bp.route("/<item_id>", methods=["put"])
@@ -38,12 +42,12 @@ def create_room(body: RoomIn):
 def update_room(item_id: int, body: RoomIn):
     room = session.query(Room).get(item_id)
     if not room:
-        raise NotFoundException    
+        raise NotFoundException
     param = body.dict()
     for attr, value in param.items():
-        setattr(room, attr, value)    
+        setattr(room, attr, value)
     session.add(room)
-    session.commit()    
+    session.commit()
     return RoomOut.from_orm(room)
 
 

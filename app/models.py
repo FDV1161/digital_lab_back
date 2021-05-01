@@ -2,6 +2,7 @@ from database import db
 from datetime import datetime
 from sqla_softdelete import SoftDeleteMixin
 from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
 
 
 class TimestampMixin:
@@ -49,6 +50,9 @@ class Room(SoftDeleteMixin, TimestampMixin, db.Model):
     name = Column(String, nullable=False, unique=True)
     description = Column(Text)
 
+    sensor_list = relationship("Sensor")
+
+
 
 class Device(SoftDeleteMixin, TimestampMixin, db.Model):
     __tablename__ = "device"
@@ -72,6 +76,8 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     device_id = Column(ForeignKey("device.id"))
     room_id = Column(ForeignKey("room.id"))
     measure_id = Column(ForeignKey("measure.id"))
+
+    room =  relationship("Room", back_populates="sensor_list")
 
 
 class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
