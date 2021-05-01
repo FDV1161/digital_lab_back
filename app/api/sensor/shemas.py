@@ -10,13 +10,18 @@ class SensorIn(OrmBaseModel):
     description: str
     address: int
     on_home: Optional[bool]
-    room_id: Optional[int]
-    measure: Optional[MeasureOut]
-    # device_id
+    room_id: int
+    device_id: int
+
+
+class SensorEditIn(SensorIn):
+    measure_id: int
 
 
 class SensorOut(SensorIn):
     id: int
+    measure: Optional[MeasureOut]
+    # devices:
 
 
 class SensorList(OrmBaseModel):

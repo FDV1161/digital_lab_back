@@ -17,6 +17,7 @@ class RoomDetailOut(RoomIn):
     id: int
     sensor_list: SensorList
 
+# class RoomEditIn()
 
 class RoomList(OrmBaseModel):
     __root__: List[RoomOut]

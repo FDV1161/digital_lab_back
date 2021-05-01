@@ -1,9 +1,7 @@
-from flask import Flask, request, Blueprint
+from flask import Flask, Blueprint
 from flask_pydantic import validate
-from database import session
-from app.models import Sensor, Measure
-from .shemas import SensorIn, SensorOut, SensorList
-from app.errors.Exception import NotFoundException
+from app.models import Sensor
+from .shemas import SensorOut, SensorList, SensorEditIn
 from app.api.base.functions import (
     create_item,
     delete_item,
@@ -18,7 +16,8 @@ bp = Blueprint('sensor', __name__)
 @bp.route("", methods=["get"])
 @validate()
 def get_sensors():
-    return get_items(Sensor)
+    sensors = get_items(Sensor)
+    return SensorList.from_orm(sensors)
 
 
 @bp.route("/<item_id>", methods=["get"])
@@ -30,17 +29,15 @@ def get_sensor(item_id: int):
 
 @bp.route("", methods=["post"])
 @validate()
-def create_sensor(body: SensorIn):
-    fk_list = {"measure": Measure}
-    sensor = create_item(Sensor, body, fk_list)
+def create_sensor(body: SensorEditIn):    
+    sensor = create_item(Sensor, body)
     return SensorOut.from_orm(sensor)
 
 
 @bp.route("/<item_id>", methods=["put"])
 @validate()
-def update_sensor(item_id: int, body: SensorIn):
-    fk_list = {"measure": Measure}
-    sensor = update_item(Sensor, item_id, body, fk_list)
+def update_sensor(item_id: int, body: SensorEditIn):    
+    sensor = update_item(Sensor, item_id, body)
     return SensorOut.from_orm(sensor)
 
 
