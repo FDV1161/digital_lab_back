@@ -2,6 +2,16 @@ from database import session, db
 from app.errors.Exception import NotFoundException, UniqueException
 from app.api.base.shemas import OrmBaseModel
 from sqlalchemy import or_
+from app.models import Room, Device, Sensor
+
+FK_LIST = {
+    "room_id": Room,
+    "device_id": Device,
+    "sensor_one_id": Sensor,
+    "sensor_two_id": Sensor,
+    "sensor_free_id": Sensor,
+}
+
 
 def get_items(model: db.Model):
     items = session.query(model).all()
@@ -11,6 +21,7 @@ def get_items(model: db.Model):
 def get_item(model: db.Model, item_id: int):
     item = session.query(model).get(item_id)
     if not item:
+        print(model, item_id)
         raise NotFoundException
     return item
 
@@ -59,9 +70,9 @@ def foreignkey_verify(data: dict, fk_list: dict):
 
 
 def check_exist_foreignkey(model, data):
-    for field in model.__table__.columns:        
-        if field.foreign_keys and field.name in data:            
-            get_item(model, data.get(field.name))
+    for field in model.__table__.columns:
+        if field.name in data and field.name in FK_LIST:
+            get_item(FK_LIST[field.name], data.get(field.name))
 
 
 def check_unique(model, data, item_id=None):
@@ -71,7 +82,8 @@ def check_unique(model, data, item_id=None):
         if c.unique and c.name in data.keys()
     ]
     if not unique_param:
-        return    
-    item = session.query(model).filter(or_(*unique_param), model.id != item_id).limit(1).scalar()    
+        return
+    item = session.query(model).filter(or_(*unique_param),
+                                       model.id != item_id).limit(1).scalar()
     if item:
         raise UniqueException

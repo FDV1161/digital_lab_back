@@ -18,5 +18,5 @@ def not_found(_):
 
 @bp.app_errorhandler(UniqueException)
 def not_found(_):
-    return "not unique"
+    return "not unique", 400
 

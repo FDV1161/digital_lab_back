@@ -30,14 +30,14 @@ def get_room(item_id: int):
 @bp.route("", methods=["post"])
 @validate()
 def create_room(body: RoomIn):
-    room = create_item(Room, body, fk_list)
+    room = create_item(Room, body)
     return RoomOut.from_orm(room)
 
 
 @bp.route("/<item_id>", methods=["put"])
 @validate()
 def update_room(item_id: int, body: RoomIn):
-    room = update_item(Room, item_id, body, fk_list)
+    room = update_item(Room, item_id, body)
     return RoomOut.from_orm(room)
 
 

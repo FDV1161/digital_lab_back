@@ -6,12 +6,12 @@ from typing import Optional
 
 
 class SensorIn(OrmBaseModel):
-    name: str
-    description: str
-    address: int
+    name: Optional[str]
+    description: Optional[str]
+    address: Optional[int]
     on_home: Optional[bool]
-    room_id: int
-    device_id: int
+    room_id: Optional[int]
+    device_id: Optional[int]
 
 
 class SensorEditIn(SensorIn):
