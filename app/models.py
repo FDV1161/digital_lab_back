@@ -49,7 +49,7 @@ class Room(SoftDeleteMixin, TimestampMixin, db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, unique=True)
     description = Column(Text)
-
+    on_home = Column(Boolean, default=False)
     sensor_one_id = Column(ForeignKey("sensor.id"))
     sensor_two_id = Column(ForeignKey("sensor.id"))
     sensor_free_id = Column(ForeignKey("sensor.id"))
