@@ -54,9 +54,6 @@ class Room(SoftDeleteMixin, TimestampMixin, db.Model):
     sensor_two_id = Column(ForeignKey("sensor.id"))
     sensor_free_id = Column(ForeignKey("sensor.id"))
 
-    sensor_list = relationship("Sensor")
-
-
 
 class Device(SoftDeleteMixin, TimestampMixin, db.Model):
     __tablename__ = "device"
@@ -80,8 +77,8 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     device_id = Column(ForeignKey("device.id"))
     room_id = Column(ForeignKey("room.id"))
     measure_id = Column(ForeignKey("measure.id"))
-
-    room =  relationship("Room", back_populates="sensor_list")
+    
+    room = relationship("Room", backref="sensor_list", foreign_keys=[room_id])
     measure = relationship("Measure")
 
 

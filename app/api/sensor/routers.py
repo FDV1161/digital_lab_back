@@ -14,35 +14,35 @@ bp = Blueprint('sensor', __name__)
 
 
 @bp.route("", methods=["get"])
-@validate()
+@validate(response_by_alias=True)
 def get_sensors():
     sensors = get_items(Sensor)
     return SensorList.from_orm(sensors)
 
 
 @bp.route("/<item_id>", methods=["get"])
-@validate()
+@validate(response_by_alias=True)
 def get_sensor(item_id: int):
     sensor = get_item(Sensor, item_id)
     return SensorOut.from_orm(sensor)
 
 
 @bp.route("", methods=["post"])
-@validate()
+@validate(response_by_alias=True)
 def create_sensor(body: SensorEditIn):    
     sensor = create_item(Sensor, body)
     return SensorOut.from_orm(sensor)
 
 
 @bp.route("/<item_id>", methods=["put"])
-@validate()
+@validate(response_by_alias=True)
 def update_sensor(item_id: int, body: SensorEditIn):    
     sensor = update_item(Sensor, item_id, body)
     return SensorOut.from_orm(sensor)
 
 
 @bp.route("/<item_id>", methods=["delete"])
-@validate()
+@validate(response_by_alias=True)
 def delete_sensor(item_id: int):
     sensor = delete_item(Sensor, item_id)
     return {"object delete": sensor.id}

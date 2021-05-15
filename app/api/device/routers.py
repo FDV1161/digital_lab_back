@@ -14,35 +14,35 @@ bp = Blueprint('device', __name__)
 
 
 @bp.route("", methods=["get"])
-@validate()
+@validate(response_by_alias=True)
 def get_devices():
     devices = get_items(Device)
     return DeviceList.from_orm(devices)
 
 
 @bp.route("/<item_id>", methods=["get"])
-@validate()
+@validate(response_by_alias=True)
 def get_device(item_id: int):
     device = get_item(Device, item_id)
     return DeviceOut.from_orm(device)
 
 
 @bp.route("", methods=["post"])
-@validate()
+@validate(response_by_alias=True)
 def create_device(body: DeviceIn):
     device = create_item(Device, body)
     return DeviceOut.from_orm(device)
 
 
 @bp.route("/<item_id>", methods=["put"])
-@validate()
+@validate(response_by_alias=True)
 def update_device(item_id: int, body: DeviceIn):
     device = update_item(Device, item_id, body)
     return DeviceOut.from_orm(device)
 
 
 @bp.route("/<item_id>", methods=["delete"])
-@validate()
+@validate(response_by_alias=True)
 def delete_device(item_id: int):
     device = delete_item(Device, item_id)
     return {"object delete": device.id}
