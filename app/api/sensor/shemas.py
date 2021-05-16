@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from typing import List
 from app.api.base.shemas import OrmBaseModel
 from app.api.measure.shemas import MeasureOut
+from app.api.device.shemas import DeviceOut
+from app.api.journal.shemas import JournalList
+
 from typing import Optional
 
 
@@ -21,8 +24,14 @@ class SensorEditIn(SensorIn):
 class SensorOut(SensorIn):
     id: int
     measure: Optional[MeasureOut]
-    # devices:
+    journal_list: JournalList
+    # device: DeviceOut
+
+
+class SensorMinOut(SensorIn):
+    id: int
+    measure: Optional[MeasureOut]
 
 
 class SensorList(OrmBaseModel):
-    __root__: List[SensorOut]
+    __root__: List[SensorMinOut]

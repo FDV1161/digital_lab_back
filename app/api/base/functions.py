@@ -72,7 +72,9 @@ def foreignkey_verify(data: dict, fk_list: dict):
 def check_exist_foreignkey(model, data):
     for field in model.__table__.columns:
         if field.name in data and field.name in FK_LIST:
-            get_item(FK_LIST[field.name], data.get(field.name))
+            field_data = data.get(field.name)
+            if field_data:
+                get_item(FK_LIST[field.name], field_data)
 
 
 def check_unique(model, data, item_id=None):

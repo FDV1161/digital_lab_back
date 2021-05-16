@@ -7,7 +7,7 @@ from app.api.sensor.shemas import SensorList
 class RoomIn(OrmBaseModel):
     name: str
     description: str
-    on_home: bool
+    on_home: Optional[bool]
     sensor_one_id: Optional[int]
     sensor_two_id: Optional[int]
     sensor_free_id: Optional[int]

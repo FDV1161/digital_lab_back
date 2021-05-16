@@ -77,9 +77,10 @@ class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
     device_id = Column(ForeignKey("device.id"))
     room_id = Column(ForeignKey("room.id"))
     measure_id = Column(ForeignKey("measure.id"))
-    
+    device = relationship("Device")
     room = relationship("Room", backref="sensor_list", foreign_keys=[room_id])
     measure = relationship("Measure")
+    journal_list = relationship("Journal")
 
 
 class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
@@ -88,7 +89,7 @@ class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
 
     id = Column(Integer, primary_key=True)
     value = Column(Float)
-    sensor_id = Column(ForeignKey("sensor.id"))
+    sensor_id = Column(ForeignKey("sensor.id"), nullable=False) # TODO сделать миграцию
 
 
 class Function(SoftDeleteMixin, TimestampMixin, db.Model):
