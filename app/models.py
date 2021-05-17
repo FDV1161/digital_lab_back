@@ -3,6 +3,7 @@ from datetime import datetime
 from sqla_softdelete import SoftDeleteMixin
 from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
+# ?charset=utf8
 
 
 class TimestampMixin:
@@ -17,11 +18,11 @@ class User(SoftDeleteMixin, TimestampMixin, db.Model):
     __table_args__ = {"comment": "Пользователи"}
 
     id = Column(Integer, primary_key=True)
-    login = Column(String, nullable=False)
-    password = Column(String, nullable=False)
-    email = Column(String)
-    name = Column(String)
-    patronymic = Column(String)
+    login = Column(String(256), nullable=False)
+    password = Column(String(256), nullable=False)
+    email = Column(String(256))
+    name = Column(String(256))
+    patronymic = Column(String(256))
     group_id = Column(ForeignKey("group.id"))
 
 
@@ -30,87 +31,7 @@ class Group(SoftDeleteMixin, TimestampMixin, db.Model):
     __table_args__ = {"comment": "Группы пользователей"}
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-
-
-class Permission(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "permission"
-    __table_args__ = {"comment": "Разрешения"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    description = Column(Text)
-
-
-class Room(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "room"
-    __table_args__ = {"comment": "Аудитория"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    description = Column(Text)
-    on_home = Column(Boolean, default=False)
-    sensor_one_id = Column(ForeignKey("sensor.id"))
-    sensor_two_id = Column(ForeignKey("sensor.id"))
-    sensor_free_id = Column(ForeignKey("sensor.id"))
-
-
-class Device(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "device"
-    __table_args__ = {"comment": "Оборудование"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    address = Column(Integer)
-    description = Column(Text)
-
-
-class Sensor(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "sensor"
-    __table_args__ = {"comment": "Датчики"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    address = Column(Integer)
-    description = Column(Text)
-    on_home = Column(Boolean)
-    device_id = Column(ForeignKey("device.id"))
-    room_id = Column(ForeignKey("room.id"))
-    measure_id = Column(ForeignKey("measure.id"))
-    device = relationship("Device")
-    room = relationship("Room", backref="sensor_list", foreign_keys=[room_id])
-    measure = relationship("Measure")
-    journal_list = relationship("Journal")
-
-
-class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "journal"
-    __table_args__ = {"comment": "Показания датчиков"}
-
-    id = Column(Integer, primary_key=True)
-    value = Column(Float)
-    sensor_id = Column(ForeignKey("sensor.id"), nullable=False) # TODO сделать миграцию
-
-
-class Function(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "function"
-    __table_args__ = {"comment": "Функции оборудования"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False)
-    min_value = Column(Integer)
-    max_value = Column(Integer)
-    current_value = Column(Integer)
-    sensor_id = Column(ForeignKey("sensor.id"))
-
-
-class Measure(SoftDeleteMixin, TimestampMixin, db.Model):
-    __tablename__ = "measure"
-    __table_args__ = {"comment": "Физические величины"}
-
-    id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, unique=True)
-    symbol = Column(String, nullable=False, unique=True)
+    name = Column(String(256), nullable=False, unique=True)
 
 
 class GroupPermission(db.Model):
@@ -119,3 +40,82 @@ class GroupPermission(db.Model):
     id = Column(Integer, primary_key=True)
     group_id = Column(Integer, ForeignKey('group.id'))
     permission_id = Column(Integer, ForeignKey('permission.id'))
+
+
+class Permission(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "permission"
+    __table_args__ = {"comment": "Разрешения"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), nullable=False, unique=True)
+    description = Column(Text)
+
+
+class Device(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "device"
+    __table_args__ = {"comment": "Датчики"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), nullable=False)
+    description = Column(Text)
+    icon = Column(String(256))
+
+    controller_id = Column(ForeignKey("controller.id"))
+    room_id = Column(ForeignKey("room.id"))
+
+    controller = relationship("controller")
+    room = relationship("Room", backref="device_list", foreign_keys=[room_id])
+
+
+class Room(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "room"
+    __table_args__ = {"comment": "Аудитория"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), nullable=False, unique=True)
+    description = Column(Text)
+
+
+class Controller(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "controller"
+    __table_args__ = {"comment": "Оборудование"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), nullable=False)
+    protocol = Column(Integer)
+    address = Column(Integer)
+    description = Column(Text)
+
+
+class Journal(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "journal"
+    __table_args__ = {"comment": "Показания датчиков"}
+
+    id = Column(Integer, primary_key=True)
+    value = Column(Float, nullable=False)
+    sensor_id = Column(ForeignKey("sensor.id"), nullable=False)
+
+
+class Function(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "func"
+    __table_args__ = {"comment": "Функции оборудования"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), nullable=False)
+    min_value = Column(Integer)
+    max_value = Column(Integer)
+    description = Column(Text)
+    measure_name = Column(String(256))
+    measure_symbol = Column(String(32))
+
+
+class DeviceFunction(SoftDeleteMixin, TimestampMixin, db.Model):
+    __tablename__ = "device_func"
+    __table_args__ = {"comment": "Функции оборудования"}
+
+    id = Column(Integer, primary_key=True)
+    id_func = Column(ForeignKey("func.id"))
+    id_device = Column(ForeignKey("device.id"))
+    address = Column(Integer)
+    on_home = Column(Boolean, default=False)
+

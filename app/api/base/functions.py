@@ -2,14 +2,14 @@ from database import session, db
 from app.errors.Exception import NotFoundException, UniqueException
 from app.api.base.shemas import OrmBaseModel
 from sqlalchemy import or_
-from app.models import Room, Device, Sensor
+from app.models import Room, Controller, Device
 
 FK_LIST = {
     "room_id": Room,
-    "device_id": Device,
-    "sensor_one_id": Sensor,
-    "sensor_two_id": Sensor,
-    "sensor_free_id": Sensor,
+    "device_id": Controller,
+    "sensor_one_id": Device,
+    "sensor_two_id": Device,
+    "sensor_free_id": Device,
 }
 
 

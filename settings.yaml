@@ -1,5 +1,5 @@
 default:
-  SQLALCHEMY_DATABASE_URI: 'sqlite:///foo.db'
+  SQLALCHEMY_DATABASE_URI: 'mysql+pymysql://root:password@127.0.0.1/project'
   SQLALCHEMY_TRACK_MODIFICATIONS: False
   DEBUG: True
 development:  
