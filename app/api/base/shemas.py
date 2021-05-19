@@ -9,10 +9,7 @@ def to_camel_case(string: str) -> str:
 
 
 class OrmBaseModel(BaseModel):
-    class Config:                
+    class Config:
         alias_generator = to_camel_case
-        allow_population_by_field_name= True
+        allow_population_by_field_name = True
         orm_mode = True
-
-        
-        
