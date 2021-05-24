@@ -1,11 +1,13 @@
-from typing import List
+from typing import List, Optional
 from app.api.base.shemas import OrmBaseModel
 
 
 class ControllerIn(OrmBaseModel):
     name: str
     address: int
-    description: str
+    protocol: int
+    port: str
+    description: Optional[str]
 
 
 class ControllerOut(ControllerIn):

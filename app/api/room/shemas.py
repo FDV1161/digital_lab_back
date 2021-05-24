@@ -1,17 +1,10 @@
-from pydantic import BaseModel
 from typing import List, Optional
 from app.api.base.shemas import OrmBaseModel
-# from app.api.device.shemas import SensorList
 
 
 class RoomIn(OrmBaseModel):
     name: str
-    description: str
-    on_home: Optional[bool]
-    sensor_one_id: Optional[int]
-    sensor_two_id: Optional[int]
-    sensor_free_id: Optional[int]
-    
+    description: Optional[str]
 
 
 class RoomOut(RoomIn):
@@ -20,9 +13,6 @@ class RoomOut(RoomIn):
 
 class RoomDetailOut(RoomIn):
     id: int
-    # sensor_list: SensorList
-
-# class RoomEditIn()
 
 
 class RoomList(OrmBaseModel):

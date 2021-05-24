@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint
+from flask import Blueprint
 from flask_pydantic import validate
 from app.models import Room
 from .shemas import RoomIn, RoomOut, RoomList, RoomDetailOut

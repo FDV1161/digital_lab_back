@@ -1,5 +1,5 @@
 from .errors import bp as errors_bp
-from .api import room_bp, controller_bp
+from .api import room_bp, controller_bp, device_bp, journal_readings_bp
 from flask import Flask
 from dynaconf import FlaskDynaconf
 from flask_cors import CORS
@@ -24,7 +24,6 @@ manager.add_command('db', MigrateCommand)
 
 app.register_blueprint(errors_bp)
 app.register_blueprint(room_bp, url_prefix="/room")
-# app.register_blueprint(device_bp, url_prefix="/device")
-# app.register_blueprint(measure_bp, url_prefix="/measure")
+app.register_blueprint(device_bp, url_prefix="/device")
 app.register_blueprint(controller_bp, url_prefix="/controller")
-# app.register_blueprint(journal_bp, url_prefix="/journal")
+app.register_blueprint(journal_readings_bp, url_prefix="/journal_readings")
