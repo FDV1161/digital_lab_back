@@ -4,16 +4,18 @@ from sqla_softdelete import SoftDeleteMixin
 from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 
 
-class TimestampMixin:
+class MyTimestampMixin:
     created_at = Column(DateTime, default=datetime.now())
     updated_at = Column(DateTime, default=datetime.now(),
                         onupdate=datetime.now())
     deleted_at = Column(DateTime)
 
 
-class UserMixin:
+class MyUserMixin:
     @declared_attr
     def created_by(cls):
         return Column(Integer, ForeignKey("user.id"))
@@ -27,7 +29,7 @@ class UserMixin:
         return Column(Integer, ForeignKey("user.id"))
 
 
-class User(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
     __tablename__ = "user"
     __table_args__ = {"comment": "Пользователи"}
 
@@ -38,8 +40,14 @@ class User(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
     name = Column(String(256))
     patronymic = Column(String(256))
 
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
 
-class Room(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+
+class Room(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "room"
     __table_args__ = {"comment": "Аудитория"}
 
@@ -48,7 +56,7 @@ class Room(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
     description = Column(Text)
 
 
-class Device(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+class Device(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "device"
     __table_args__ = {"comment": "Датчики / исполнительные устройства"}
 
@@ -61,7 +69,7 @@ class Device(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
     room_id = Column(ForeignKey("room.id"))
 
 
-class Controller(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+class Controller(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "controller"
     __table_args__ = {"comment": "Оборудование"}
 
@@ -73,7 +81,7 @@ class Controller(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
     description = Column(Text)
 
 
-class JournalReadings(SoftDeleteMixin, TimestampMixin, db.Model):
+class JournalReadings(SoftDeleteMixin, MyTimestampMixin, db.Model):
     __tablename__ = "journal_readings"
     __table_args__ = {"comment": "Журнал показаний датчиков"}
 
@@ -82,7 +90,7 @@ class JournalReadings(SoftDeleteMixin, TimestampMixin, db.Model):
     device_func_id = Column(ForeignKey("device_func.id"), nullable=False)
 
 
-class CurrentReadings(SoftDeleteMixin, TimestampMixin, db.Model):
+class CurrentReadings(SoftDeleteMixin, MyTimestampMixin, db.Model):
     __tablename__ = "current_readings"
     __table_args__ = {"comment": "Текущие показания датчиков"}
 
@@ -91,7 +99,7 @@ class CurrentReadings(SoftDeleteMixin, TimestampMixin, db.Model):
     device_func_id = Column(ForeignKey("device_func.id"), nullable=False)
 
 
-class Function(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+class Function(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "func"
     __table_args__ = {"comment": "Функции оборудования"}
 
@@ -104,7 +112,7 @@ class Function(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
     measure_symbol = Column(String(32))
 
 
-class DeviceFunction(SoftDeleteMixin, TimestampMixin, UserMixin, db.Model):
+class DeviceFunction(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "device_func"
     __table_args__ = {"comment": "Функции оборудования"}
 

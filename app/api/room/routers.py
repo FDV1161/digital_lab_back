@@ -9,12 +9,14 @@ from app.api.base.functions import (
     get_item,
     get_items
 )
+from flask_login import login_required
 
 bp = Blueprint('room', __name__)
 
 
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
+@login_required
 def get_rooms():
     rooms = get_items(Room)
     return RoomList.from_orm(rooms)

@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_pydantic import validate
 from app.models import Device
-from .shemas import DeviceOut, DeviceList, DeviceEditIn
+from .shemas import DeviceOut, DeviceList, DeviceIn
 from app.api.base.functions import (
     create_item,
     delete_item,
@@ -29,14 +29,14 @@ def get_device(item_id: int):
 
 @bp.route("", methods=["post"])
 @validate(response_by_alias=True)
-def create_device(body: DeviceEditIn):
+def create_device(body: DeviceIn):
     device = create_item(Device, body)
     return DeviceOut.from_orm(device)
 
 
 @bp.route("/<item_id>", methods=["put"])
 @validate(response_by_alias=True)
-def update_device(item_id: int, body: DeviceEditIn):
+def update_device(item_id: int, body: DeviceIn):
     device = update_item(Device, item_id, body)
     return DeviceOut.from_orm(device)
 
