@@ -59,6 +59,14 @@ def update_item(model: db.Model, item_id: int, data: OrmBaseModel, fk_list: dict
     return item
 
 
+def upload_file_item(model: db.Model, item_id: int, file_name: str):
+    item = get_item(model, item_id)
+    item.icon = file_name
+    session.add(item)
+    session.commit()
+    return item
+
+
 def foreignkey_verify(data: dict, fk_list: dict):
     for field, model in fk_list.items():
         field_data = data.pop(field)

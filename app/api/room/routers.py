@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_pydantic import validate
 from app.models import Room
-from .shemas import RoomIn, RoomOut, RoomList, RoomDetailOut
+from .shemas import RoomIn, RoomOut, RoomList
 from app.api.base.functions import (
     create_item,
     delete_item,
@@ -16,7 +16,7 @@ bp = Blueprint('room', __name__)
 
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
-@login_required
+# @login_required
 def get_rooms():
     rooms = get_items(Room)
     return RoomList.from_orm(rooms)
@@ -26,7 +26,7 @@ def get_rooms():
 @validate(response_by_alias=True)
 def get_room(item_id: int):
     room = get_item(Room, item_id)
-    return RoomDetailOut.from_orm(room)
+    return RoomOut.from_orm(room)
 
 
 @bp.route("", methods=["post"])

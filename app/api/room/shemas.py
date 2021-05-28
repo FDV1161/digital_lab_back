@@ -1,5 +1,7 @@
 from typing import List, Optional
+
 from app.api.base.shemas import OrmBaseModel
+from app.api.device.shemas import DeviceList
 
 
 class RoomIn(OrmBaseModel):
@@ -9,6 +11,7 @@ class RoomIn(OrmBaseModel):
 
 class RoomOut(RoomIn):
     id: int
+    devices: DeviceList
 
 
 class RoomDetailOut(RoomIn):

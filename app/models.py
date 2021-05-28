@@ -54,6 +54,7 @@ class Room(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(256), nullable=False, unique=True)
     description = Column(Text)
+    devices = relationship("Device")
 
 
 class Device(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
@@ -67,6 +68,7 @@ class Device(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
 
     controller_id = Column(ForeignKey("controller.id"))
     room_id = Column(ForeignKey("room.id"))
+    device_functions = relationship("DeviceFunction")
 
 
 class Controller(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
