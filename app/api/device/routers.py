@@ -11,6 +11,7 @@ from app.api.base.functions import (
     upload_file_item
 )
 from ..file.utils import upload_file
+from app.models import DeviceFunction
 
 bp = Blueprint('device', __name__)
 
@@ -32,18 +33,20 @@ def get_device(item_id: int):
 @bp.route("", methods=["post"])
 @validate(response_by_alias=True)
 def create_device(body: DeviceIn):
-    # body.icon = upload_file(request.files.get('file'))
-    device = create_item(Device, body)
+    fk_list = {
+        "device_functions": DeviceFunction,
+    }
+    device = create_item(Device, body, fk_list)
     return DeviceOut.from_orm(device)
 
 
 @bp.route("/<item_id>", methods=["put"])
 @validate(response_by_alias=True)
 def update_device(item_id: int, body: DeviceIn):
-    # file_name = upload_file(request.files.get('file'))
-    # if file_name:
-    #     body.icon = file_name
-    device = update_item(Device, item_id, body)
+    fk_list = {
+        "device_functions": DeviceFunction,
+    }
+    device = update_item(Device, item_id, body, fk_list)
     return DeviceOut.from_orm(device)
 
 

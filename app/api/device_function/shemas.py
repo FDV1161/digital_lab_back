@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from pydantic import Field
 
@@ -6,6 +6,7 @@ from app.api.base.shemas import OrmBaseModel
 
 
 class DeviceFunctionIn(OrmBaseModel):
+    id: Optional[int]
     id_func: int
     id_device: int
     address: int
@@ -13,7 +14,7 @@ class DeviceFunctionIn(OrmBaseModel):
 
 
 class DeviceFunctionOut(DeviceFunctionIn):
-    id: int
+    pass
 
 
 class DeviceFunctionList(OrmBaseModel):

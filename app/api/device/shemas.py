@@ -8,7 +8,7 @@ from app.api.base.shemas import OrmBaseModel
 
 from typing import Optional
 
-from app.api.device_function.shemas import DeviceFunctionList
+from app.api.device_function.shemas import DeviceFunctionList, DeviceFunctionIn
 
 
 class DeviceIn(OrmBaseModel):
@@ -17,7 +17,8 @@ class DeviceIn(OrmBaseModel):
     controller_id: int
     description: Optional[str]
     icon: Optional[str]
-    device_functions: DeviceFunctionList
+    # device_functions: DeviceFunctionList
+    device_functions: List[DeviceFunctionIn]
 
 
 class DeviceOut(DeviceIn):

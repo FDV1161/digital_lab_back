@@ -6,12 +6,12 @@ class FunctionIn(OrmBaseModel):
     name: str
     min_value: int
     max_value: int
-    measure_name: str
-    measure_symbol: str
+    measure_name: Optional[str]
+    measure_symbol: Optional[str]
     description: Optional[str]
 
 
-class FunctionOut(OrmBaseModel):
+class FunctionOut(FunctionIn):
     id: int
 
 

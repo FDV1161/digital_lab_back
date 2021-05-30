@@ -49,6 +49,8 @@ def update_item(model: db.Model, item_id: int, data: OrmBaseModel, fk_list: dict
     data = data.dict(exclude_unset=True)
     # if fk_list:
     #     data = foreignkey_verify(data, fk_list)
+    # [{device_functions: Model}]
+    data = foreignkeys_to_obj(data, fk_list)
     check_exist_foreignkey(model, data)
     check_unique(model, data, item_id)
     item = get_item(model, item_id)
@@ -65,6 +67,24 @@ def upload_file_item(model: db.Model, item_id: int, file_name: str):
     session.add(item)
     session.commit()
     return item
+
+
+def foreignkeys_to_obj(data, fk_list):
+    if fk_list:
+        for key, model in fk_list.items():
+            device_functions = data.pop(key, None)
+            device_functions_obj = []
+            for function in device_functions:
+                function_id = function.get("id")
+                if function_id:
+                    function_obj = get_item(model, function_id)
+                else:
+                    function_obj = model()
+                for attr, value in function.items():
+                    setattr(function_obj, attr, value)
+                device_functions_obj.append(function_obj)
+            data[key] = device_functions_obj
+    return data
 
 
 def foreignkey_verify(data: dict, fk_list: dict):
