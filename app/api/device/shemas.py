@@ -8,7 +8,7 @@ from app.api.base.shemas import OrmBaseModel
 
 from typing import Optional
 
-from app.api.device_function.shemas import DeviceFunctionList, DeviceFunctionIn
+from app.api.device_function.shemas import DeviceFunctionIn, DeviceFunctionOut
 
 
 class DeviceIn(OrmBaseModel):
@@ -23,7 +23,7 @@ class DeviceIn(OrmBaseModel):
 
 class DeviceOut(DeviceIn):
     id: int
-
+    device_functions: List[DeviceFunctionOut]
     # @validator('icon')
     # def icon_path(cls, filename):
     #     if filename:

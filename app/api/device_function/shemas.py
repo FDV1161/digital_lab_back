@@ -5,16 +5,25 @@ from pydantic import Field
 from app.api.base.shemas import OrmBaseModel
 
 
+class FunctionOut(OrmBaseModel):
+    id: int
+    name: str
+
+
 class DeviceFunctionIn(OrmBaseModel):
     id: Optional[int]
     id_func: int
-    id_device: int
+    id_device: Optional[int]
     address: int
     on_home: bool = Field(default=False)
 
 
-class DeviceFunctionOut(DeviceFunctionIn):
-    pass
+class DeviceFunctionOut(OrmBaseModel):
+    id: int
+    func: FunctionOut
+    id_device: int
+    address: int
+    on_home: bool = Field(default=False)
 
 
 class DeviceFunctionList(OrmBaseModel):

@@ -36,7 +36,13 @@ def create_device(body: DeviceIn):
     fk_list = {
         "device_functions": DeviceFunction,
     }
-    device = create_item(Device, body, fk_list)
+    device_functions = body.device_functions
+    body.device_functions = []
+    device = create_item(Device, body)
+    for df in device_functions:
+        df.id_device = device.id
+    body.device_functions = device_functions
+    device = update_item(Device, device.id, body, fk_list)
     return DeviceOut.from_orm(device)
 
 

@@ -123,3 +123,4 @@ class DeviceFunction(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     id_device = Column(ForeignKey("device.id"))
     address = Column(Integer)
     on_home = Column(Boolean, default=False)
+    func = relationship("Function")
