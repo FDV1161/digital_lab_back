@@ -3,15 +3,15 @@ from app.api.base.shemas import OrmBaseModel
 from datetime import datetime
 
 
-class JournalReadingsIn(OrmBaseModel):
+class CurrentReadingsIn(OrmBaseModel):
     value: float
     device_func_id: int
 
 
-class JournalReadingsOut(JournalReadingsIn):
+class CurrentReadingsOut(CurrentReadingsIn):
     id: int
     updated_at: datetime
 
 
-class JournalReadingsList(OrmBaseModel):
-    __root__: List[JournalReadingsOut]
+class CurrentReadingsList(OrmBaseModel):
+    __root__: List[CurrentReadingsOut]

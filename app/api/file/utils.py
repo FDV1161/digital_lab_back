@@ -3,9 +3,10 @@ from flask import current_app
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'svg'}
 
 
+# TODO кидать exception
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

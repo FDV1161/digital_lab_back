@@ -74,4 +74,4 @@ def delete_device(item_id: int):
 @bp.route("/upload_file", methods=["post"])
 def upload_file_router():
     file_name = upload_file(request.files.get('file'))
-    return file_name
+    return {"icon_path": file_name}

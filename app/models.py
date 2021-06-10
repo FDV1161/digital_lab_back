@@ -9,9 +9,9 @@ from flask_login import UserMixin
 
 
 class MyTimestampMixin:
-    created_at = Column(DateTime, default=datetime.now())
-    updated_at = Column(DateTime, default=datetime.now(),
-                        onupdate=datetime.now())
+    created_at = Column(DateTime, default=lambda: datetime.now())
+    updated_at = Column(DateTime, default=lambda: datetime.now(),
+                        onupdate=lambda: datetime.now())
     deleted_at = Column(DateTime)
 
 

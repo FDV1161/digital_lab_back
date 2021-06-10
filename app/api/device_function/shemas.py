@@ -5,9 +5,11 @@ from pydantic import Field
 from app.api.base.shemas import OrmBaseModel
 
 
-class FunctionOut(OrmBaseModel):
-    id: int
-    name: str
+# class FunctionOut(OrmBaseModel):
+#     id: int
+#     name: str
+#     measure_symbol: str
+from app.api.function.shemas import FunctionOut
 
 
 class DeviceFunctionIn(OrmBaseModel):
