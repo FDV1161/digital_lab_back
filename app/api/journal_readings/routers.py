@@ -20,7 +20,5 @@ def create_current_readings(body: JournalReadingsIn):
 @bp.route("/<device_func_id>", methods=["get"])
 @validate(response_by_alias=True)
 def get_journal_readings(device_func_id: int):
-    # journal_readings = get_items(JournalReadings)
     journal_readings = session.query(JournalReadings).filter(JournalReadings.device_func_id==device_func_id).all()
-    print(journal_readings)
     return JournalReadingsList.from_orm(journal_readings)

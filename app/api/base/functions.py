@@ -21,7 +21,6 @@ def get_items(model: db.Model):
 def get_item(model: db.Model, item_id: int):
     item = session.query(model).get(item_id)
     if not item:
-        print(model, item_id)
         raise NotFoundException
     return item
 
