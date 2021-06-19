@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from app.api.base.shemas import OrmBaseModel
 from datetime import datetime
 
@@ -15,3 +15,7 @@ class JournalReadingsOut(JournalReadingsIn):
 
 class JournalReadingsList(OrmBaseModel):
     __root__: List[JournalReadingsOut]
+
+
+class JournalReadingsFilter(OrmBaseModel):
+    device_func_id: int

@@ -2,117 +2,78 @@ from database import session, db
 from app.errors.Exception import NotFoundException, UniqueException
 from app.api.base.shemas import OrmBaseModel
 from sqlalchemy import or_
-from app.models import Room, Controller, Device
-
-FK_LIST = {
-    "room_id": Room,
-    "device_id": Controller,
-    "sensor_one_id": Device,
-    "sensor_two_id": Device,
-    "sensor_free_id": Device,
-}
 
 
-def get_items(model: db.Model):
-    items = session.query(model).all()
-    return items
+class BaseCRUD:
+    model: db.Model = None
+    foreign_keys = None
+    filter = None
 
+    @staticmethod
+    def _get_item(model, item_id):
+        item = session.query(model).get(item_id)
+        if not item:
+            raise NotFoundException
+        return item
 
-def get_item(model: db.Model, item_id: int):
-    item = session.query(model).get(item_id)
-    if not item:
-        raise NotFoundException
-    return item
+    def _check_unique(self, data, item_id=None):
+        unique_param = [
+            c == data.get(c.name)
+            for c in self.model.__table__.columns
+            if c.unique and c.name in data.keys()
+        ]
+        if not unique_param:
+            return
+        item = session.query(self.model).filter(or_(*unique_param),
+                                                self.model.id != item_id).limit(1).scalar()
+        if item:
+            raise UniqueException
 
-
-def create_item(model: db.Model, data: OrmBaseModel, fk_list: dict = None):
-    data = data.dict(exclude_unset=True)
-    # if fk_list:
-    #     data = foreignkey_verify(data, fk_list)
-    check_exist_foreignkey(model, data)
-    check_unique(model, data)
-    item = model(**data)
-    session.add(item)
-    session.commit()
-    return item
-
-
-def delete_item(model: db.Model, item_id: int):
-    item = get_item(model, item_id)
-    session.delete(item)
-    session.commit()
-    return item
-
-
-def update_item(model: db.Model, item_id: int, data: OrmBaseModel, fk_list: dict = None):
-    data = data.dict(exclude_unset=True)
-    # if fk_list:
-    #     data = foreignkey_verify(data, fk_list)
-    # [{device_functions: Model}]
-    data = foreignkeys_to_obj(data, fk_list)
-    check_exist_foreignkey(model, data)
-    check_unique(model, data, item_id)
-    item = get_item(model, item_id)
-    for attr, value in data.items():
-        setattr(item, attr, value)
-    session.add(item)
-    session.commit()
-    return item
-
-
-def upload_file_item(model: db.Model, item_id: int, file_name: str):
-    item = get_item(model, item_id)
-    item.icon = file_name
-    session.add(item)
-    session.commit()
-    return item
-
-
-def foreignkeys_to_obj(data, fk_list):
-    if fk_list:
-        for key, model in fk_list.items():
-            device_functions = data.pop(key, None)
-            device_functions_obj = []
-            for function in device_functions:
-                function_id = function.get("id")
-                if function_id:
-                    function_obj = get_item(model, function_id)
+    def _check_exist_foreignkey(self, data):
+        for foreign_key in self.foreign_keys:
+            foreign_key_id = data.get(foreign_key)
+            if foreign_key_id:
+                foreign_key_model = self.foreign_keys[foreign_key]
+                if isinstance(foreign_key_id, list):
+                    for fk_id in foreign_key_id:
+                        self._get_item(foreign_key_model, fk_id)
                 else:
-                    function_obj = model()
-                for attr, value in function.items():
-                    setattr(function_obj, attr, value)
-                device_functions_obj.append(function_obj)
-            data[key] = device_functions_obj
-    return data
+                    self._get_item(foreign_key_model, foreign_key_id)
 
+    def data_verify(self, data: OrmBaseModel):
+        data = data.dict(exclude_unset=True)
+        self._check_unique(data)
+        self._check_exist_foreignkey(data)
+        return data
 
-def foreignkey_verify(data: dict, fk_list: dict):
-    for field, model in fk_list.items():
-        field_data = data.pop(field)
-        item = None
-        if field_data:
-            item = get_item(model, field_data.get("id"))
-        data[field] = item
-    return data
+    def get_items(self, filters: OrmBaseModel = None):
+        if self.filter:
+            items = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True)).all()
+        else:
+            items = session.query(self.model).all()
+        return items
 
+    def get_item(self, item_id: int):
+        return self._get_item(self.model, item_id)
 
-def check_exist_foreignkey(model, data):
-    for field in model.__table__.columns:
-        if field.name in data and field.name in FK_LIST:
-            field_data = data.get(field.name)
-            if field_data:
-                get_item(FK_LIST[field.name], field_data)
+    def create_item(self, data: OrmBaseModel):
+        data = self.data_verify(data)
+        item = self.model(**data)
+        session.add(item)
+        session.commit()
+        return item
 
+    def update_item(self, item_id: int, data: OrmBaseModel):
+        data = self.data_verify(data)
+        item = self.get_item(item_id)
+        for attr, value in data.items():
+            setattr(item, attr, value)
+        session.add(item)
+        session.commit()
+        return item
 
-def check_unique(model, data, item_id=None):
-    unique_param = [
-        c == data.get(c.name)
-        for c in model.__table__.columns
-        if c.unique and c.name in data.keys()
-    ]
-    if not unique_param:
-        return
-    item = session.query(model).filter(or_(*unique_param),
-                                       model.id != item_id).limit(1).scalar()
-    if item:
-        raise UniqueException
+    def delete_item(self, item_id: int):
+        item = self.get_item(item_id)
+        session.delete(item)
+        session.commit()
+        return item
