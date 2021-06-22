@@ -8,7 +8,8 @@ from .api import (
     file_bp,
     function_bp,
     current_readings_bp,
-    device_function_bp
+    device_function_bp,
+    home_bp
 )
 from flask import Flask, send_from_directory, current_app
 from dynaconf import FlaskDynaconf
@@ -47,6 +48,7 @@ app.register_blueprint(current_readings_bp, url_prefix="/current_readings")
 app.register_blueprint(device_function_bp, url_prefix="/device_functions")
 app.register_blueprint(function_bp, url_prefix="/function")
 app.register_blueprint(file_bp, url_prefix="/file")
+app.register_blueprint(home_bp, url_prefix="/home")
 app.register_blueprint(auth_bp)
 
 

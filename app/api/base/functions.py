@@ -30,6 +30,8 @@ class BaseCRUD:
             raise UniqueException
 
     def _check_exist_foreignkey(self, data):
+        if not self.foreign_keys:
+            return
         for foreign_key in self.foreign_keys:
             foreign_key_id = data.get(foreign_key)
             if foreign_key_id:

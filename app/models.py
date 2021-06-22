@@ -81,6 +81,7 @@ class Controller(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     port = Column(String(256))
     address = Column(Integer)
     description = Column(Text)
+    baudrate = Column(Integer)
 
 
 class JournalReadings(SoftDeleteMixin, MyTimestampMixin, db.Model):
@@ -123,4 +124,7 @@ class DeviceFunction(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     id_device = Column(ForeignKey("device.id"))
     address = Column(Integer)
     on_home = Column(Boolean, default=False)
+    multiply = Column(Float)
+    write_enable = Column(Boolean)
+    cur_val = Column(Float)
     func = relationship("Function")
