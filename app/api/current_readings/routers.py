@@ -17,5 +17,5 @@ def create_current_readings(body: CurrentReadingsIn):
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
 def get_current_readings():
-    current_readings = crud.get_items()
+    current_readings, _ = crud.get_items()
     return CurrentReadingsList.from_orm(current_readings)

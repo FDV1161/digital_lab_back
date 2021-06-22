@@ -10,7 +10,7 @@ crud = Crud()
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
 def get_functions():
-    functions = crud.get_items()
+    functions, _ = crud.get_items()
     return FunctionList.from_orm(functions)
 
 

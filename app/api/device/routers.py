@@ -11,7 +11,7 @@ crud = Crud()
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
 def get_devices():
-    devices = crud.get_items()
+    devices, _ = crud.get_items()
     return DeviceList.from_orm(devices)
 
 

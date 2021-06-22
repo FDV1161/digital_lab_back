@@ -1,4 +1,6 @@
 from typing import List, Optional
+from flask_sqlalchemy import Pagination
+from pydantic import Field
 from app.api.base.shemas import OrmBaseModel
 from datetime import datetime
 
@@ -10,12 +12,23 @@ class JournalReadingsIn(OrmBaseModel):
 
 class JournalReadingsOut(JournalReadingsIn):
     id: int
-    updated_at: datetime
+    updated_at: datetime    
 
 
 class JournalReadingsList(OrmBaseModel):
-    __root__: List[JournalReadingsOut]
+    values: List[JournalReadingsOut]
+    row_count: Optional[int]
 
 
 class JournalReadingsFilter(OrmBaseModel):
     device_func_id: int
+
+
+class JournalReadingsPagination(OrmBaseModel):
+    paginate_page: Optional[int] = Field(default=1)
+    pagination_count: Optional[int] = Field(default=10)
+
+
+class JournalReadingsQuery(JournalReadingsFilter, JournalReadingsPagination):
+    pass
+  

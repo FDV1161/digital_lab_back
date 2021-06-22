@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_pydantic import validate
 from app.models import JournalReadings
-from .shemas import JournalReadingsList, JournalReadingsOut, JournalReadingsIn, JournalReadingsFilter
+from .shemas import JournalReadingsList, JournalReadingsOut, JournalReadingsIn, JournalReadingsQuery, JournalReadingsFilter
 from database import session
 from .crud import JournalReadingsCRUD as Crud
 
@@ -18,7 +18,8 @@ def create_journal_readings(body: JournalReadingsIn):
 
 @bp.route("/", methods=["get"])
 @validate(response_by_alias=True)
-def get_journal_readings(query: JournalReadingsFilter):
-    journal_readings = crud.get_items(filters=query)
-    # journal_readings = session.query(JournalReadings).filter(JournalReadings.device_func_id == query).all()
-    return JournalReadingsList.from_orm(journal_readings)
+def get_journal_readings(query: JournalReadingsQuery):
+    filters = JournalReadingsFilter.parse_obj(query.dict())
+    journal_readings, row_count = crud.get_items(
+        filters=filters, page=query.paginate_page, count=query.pagination_count)
+    return JournalReadingsList(values=journal_readings, row_count=row_count)

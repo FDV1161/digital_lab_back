@@ -1,3 +1,4 @@
+from flask_sqlalchemy import Pagination
 from database import session, db
 from app.errors.Exception import NotFoundException, UniqueException
 from app.api.base.shemas import OrmBaseModel
@@ -7,7 +8,7 @@ from sqlalchemy import or_
 class BaseCRUD:
     model: db.Model = None
     foreign_keys = None
-    filter = None
+    filter = None    
 
     @staticmethod
     def _get_item(model, item_id):
@@ -48,12 +49,14 @@ class BaseCRUD:
         self._check_exist_foreignkey(data)
         return data
 
-    def get_items(self, filters: OrmBaseModel = None):
+    def get_items(self, filters: OrmBaseModel = None, page=1, count=10):        
         if self.filter:
-            items = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True)).all()
+            items = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True))
+            row_count = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True)).count()
         else:
-            items = session.query(self.model).all()
-        return items
+            items = session.query(self.model)
+            row_count = session.query(self.model).count()
+        return items.paginate(page, count, False).items, row_count
 
     def get_item(self, item_id: int):
         return self._get_item(self.model, item_id)

@@ -12,7 +12,7 @@ crud = Crud()
 @validate(response_by_alias=True)
 # @login_required
 def get_rooms():
-    rooms = crud.get_items()
+    rooms, _ = crud.get_items()
     return RoomList.from_orm(rooms)
 
 

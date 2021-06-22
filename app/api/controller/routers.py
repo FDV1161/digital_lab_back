@@ -10,7 +10,7 @@ crud = Crud()
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
 def get_controllers():
-    controllers = crud.get_items()
+    controllers, _ = crud.get_items()
     return ControllerList.from_orm(controllers)
 
 
