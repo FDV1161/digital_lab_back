@@ -4,6 +4,7 @@ default:
   UPLOAD_FOLDER: 'static/images/'
   SECRET_KEY: 'this is secret key !!!'
   DEBUG: True
+  SCRIPTS_FOLDER: 'E:\project\back\scripts\'
 development:  
 production:
   
