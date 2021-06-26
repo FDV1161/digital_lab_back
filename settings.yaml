@@ -5,6 +5,7 @@ default:
   SECRET_KEY: 'this is secret key !!!'
   DEBUG: True
   SCRIPTS_FOLDER: 'E:\project\back\scripts\'
+  SCRIPTS_INTERPRETER: 'python'
 development:  
 production:
   

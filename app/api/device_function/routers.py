@@ -32,6 +32,7 @@ def delete_device_function(item_id: int):
 @bp.route("/run", methods=["post"])
 @validate(response_by_alias=True)
 def run_device_function(body: DeviceFunctionRunner):
-    folder = current_app.config['SCRIPTS_FOLDER']    
-    process = Popen(["python", folder + "script.py", str(body.id), str(body.value)])
+    folder = current_app.config['SCRIPTS_FOLDER']
+    interpreter = current_app.config['SCRIPTS_INTERPRETER']
+    process = Popen([interpreter, folder + "script.py", str(body.id), str(body.value)])
     return body
