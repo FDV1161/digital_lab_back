@@ -10,11 +10,19 @@ class DeviceFunctionCreate(OrmBaseModel):
     id_device: int
     address: int
     on_home: bool = Field(default=False)
+    write_enable: bool = Field(default=False)
 
 
 class DeviceFunctionUpdate(OrmBaseModel):
     address: int
+    id_func: int    
     on_home: bool = Field(default=False)
+    write_enable: bool = Field(default=False)
+
+
+class DeviceFunctionRunner(OrmBaseModel):
+    id: int  
+    value: int
 
 
 class DeviceFunctionOut(OrmBaseModel):

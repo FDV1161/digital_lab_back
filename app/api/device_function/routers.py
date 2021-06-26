@@ -1,7 +1,8 @@
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask_pydantic import validate
-from .shemas import DeviceFunctionCreate, DeviceFunctionUpdate, DeviceFunctionOut
+from .shemas import DeviceFunctionCreate, DeviceFunctionUpdate, DeviceFunctionOut, DeviceFunctionRunner
 from .crud import DeviceFunctionCRUD as Crud
+from subprocess import Popen
 
 bp = Blueprint('device_function', __name__)
 crud = Crud()
@@ -26,3 +27,11 @@ def update_device_function(item_id: int, body: DeviceFunctionUpdate):
 def delete_device_function(item_id: int):
     device_function = crud.delete_item(item_id)
     return {"object delete": device_function.id}
+
+
+@bp.route("/run", methods=["post"])
+@validate(response_by_alias=True)
+def run_device_function(body: DeviceFunctionRunner):
+    folder = current_app.config['SCRIPTS_FOLDER']    
+    process = Popen(["python", folder + "script.py", str(body.id), str(body.value)])
+    return body
