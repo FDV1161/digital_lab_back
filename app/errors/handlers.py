@@ -11,7 +11,7 @@ bp = Blueprint('errors', __name__)
 
 @bp.app_errorhandler(NotFoundException)
 def not_found(_):
-    return "not found"
+    return "not found", 404
 
 
 @bp.app_errorhandler(UniqueException)

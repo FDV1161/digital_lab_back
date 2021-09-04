@@ -4,6 +4,7 @@ from flask_pydantic import validate
 from app.models import User
 from database import db
 from .shemas import AuthIn, AuthOut
+from app.errors.Exception import NotFoundException
 
 bp = Blueprint('auth', __name__)
 
@@ -15,7 +16,7 @@ def login(body: AuthIn):
     if user and user.check_password(body.password):
         login_user(user, remember=body.remember)
         return AuthOut.from_orm(user)
-    abort(404, f"The user with this password was not found")
+    raise NotFoundException
 
 
 @bp.route('/get_me')

@@ -6,6 +6,13 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from enum import IntEnum
+
+
+class GroupE(IntEnum):
+    admin = 1
+    editor = 2
+    viewer = 3
 
 
 class MyTimestampMixin:
@@ -29,6 +36,14 @@ class MyUserMixin:
         return Column(Integer, ForeignKey("user.id"))
 
 
+class Group(SoftDeleteMixin, MyTimestampMixin, db.Model):
+    __tablename__ = "group"
+    __table_args__ = {"comment": "Группы пользователей"}
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(256), unique=True, nullable=False)
+
+
 class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
     __tablename__ = "user"
     __table_args__ = {"comment": "Пользователи"}
@@ -38,7 +53,15 @@ class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
     password = Column(String(256), nullable=False)
     email = Column(String(256))
     name = Column(String(256))
+    group_id = Column(
+        ForeignKey("group.id"),
+        nullable=False,
+        server_default=str(GroupE.viewer.value),
+        default=str(GroupE.viewer.value)
+    )
     patronymic = Column(String(256))
+
+    group = relationship("Group")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)

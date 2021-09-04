@@ -3,3 +3,4 @@ venv/
 *.secrets.yaml
 *.db
 app/static
+.idea

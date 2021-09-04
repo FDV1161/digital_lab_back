@@ -1,10 +1,11 @@
 default:
-  SQLALCHEMY_DATABASE_URI: 'mysql+pymysql://root:password@192.168.0.136/project'
+  SQLALCHEMY_DATABASE_URI: 'mysql+pymysql://root:password@localhost/project'
   SQLALCHEMY_TRACK_MODIFICATIONS: False
   UPLOAD_FOLDER: 'static/images/'
   SECRET_KEY: 'this is secret key !!!'
   DEBUG: True
-  SCRIPTS_FOLDER: 'E:\project\back\scripts\'
+  HOST: '0.0.0.0'
+  SCRIPTS_FOLDER: '/home/dmitriy/Документы/projects/digital_lab_back/scripts'
   SCRIPTS_INTERPRETER: 'python'
 development:  
 production:
