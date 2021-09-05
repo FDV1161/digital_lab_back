@@ -49,17 +49,18 @@ class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
     __table_args__ = {"comment": "Пользователи"}
 
     id = Column(Integer, primary_key=True)
-    login = Column(String(256), nullable=False)
+    login = Column(String(256), nullable=False, unique=True)
     password = Column(String(256), nullable=False)
     email = Column(String(256))
     name = Column(String(256))
+    surname = Column(String(256))
+    patronymic = Column(String(256))
     group_id = Column(
         ForeignKey("group.id"),
         nullable=False,
         server_default=str(GroupE.viewer.value),
         default=str(GroupE.viewer.value)
-    )
-    patronymic = Column(String(256))
+    )    
 
     group = relationship("Group")
 

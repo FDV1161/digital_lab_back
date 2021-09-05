@@ -9,3 +9,4 @@ from .current_readings import bp as current_readings_bp
 from .device_function import bp as device_function_bp
 from .home import bp as home_bp
 from .group import bp as group_bp
+from .users import bp as users_bp

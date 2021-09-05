@@ -10,7 +10,8 @@ from .api import (
     current_readings_bp,
     device_function_bp,
     home_bp,
-    group_bp
+    group_bp,
+    users_bp
 )
 from flask import Flask, send_from_directory, current_app
 from dynaconf import FlaskDynaconf
@@ -51,6 +52,7 @@ app.register_blueprint(function_bp, url_prefix="/function")
 app.register_blueprint(file_bp, url_prefix="/file")
 app.register_blueprint(home_bp, url_prefix="/home")
 app.register_blueprint(group_bp, url_prefix="/group")
+app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(auth_bp)
 
 

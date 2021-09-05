@@ -1,4 +1,5 @@
 from flask_sqlalchemy import Pagination
+from sqlalchemy.sql.elements import Null
 from database import session, db
 from app.errors.Exception import NotFoundException, UniqueException
 from app.api.base.shemas import OrmBaseModel
@@ -43,9 +44,9 @@ class BaseCRUD:
                 else:
                     self._get_item(foreign_key_model, foreign_key_id)
 
-    def data_verify(self, data: OrmBaseModel):
+    def data_verify(self, data: OrmBaseModel, item_id=Null):
         data = data.dict(exclude_unset=True)
-        self._check_unique(data)
+        self._check_unique(data, item_id=item_id)
         self._check_exist_foreignkey(data)
         return data
 
@@ -69,7 +70,7 @@ class BaseCRUD:
         return item
 
     def update_item(self, item_id: int, data: OrmBaseModel):
-        data = self.data_verify(data)
+        data = self.data_verify(data, item_id=item_id)
         item = self.get_item(item_id)
         for attr, value in data.items():
             setattr(item, attr, value)
