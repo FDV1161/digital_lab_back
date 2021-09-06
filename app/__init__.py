@@ -13,27 +13,20 @@ from .api import (
     group_bp,
     users_bp
 )
-from flask import Flask, send_from_directory, current_app
+from flask import Flask, send_from_directory
 from dynaconf import FlaskDynaconf
 from flask_cors import CORS
 
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
-from flask_login import LoginManager
 from database import db
-from .models import User
 
 app = Flask(__name__)
 
 FlaskDynaconf(app, settings_files=["settings.yaml", '.secrets.yaml'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 CORS(app, support_credentials=True)
-login_manager = LoginManager(app)
 
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.query(User).get(user_id)
 
 
 db.init_app(app)

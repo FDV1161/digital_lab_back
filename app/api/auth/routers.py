@@ -1,33 +1,48 @@
-from flask_login import login_user, login_required, logout_user, current_user
-from flask import Blueprint, abort
-from flask_pydantic import validate
+from flask.json import jsonify
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
+from flask import Blueprint
 from app.models import User
-from database import db
-from .shemas import AuthIn, AuthOut
-from app.errors.Exception import NotFoundException
+from app.errors.Exception import Unauthorized
 
 bp = Blueprint('auth', __name__)
 
-
-@bp.route("/login", methods=["post"])
-@validate(response_by_alias=True)
-def login(body: AuthIn):
-    user = db.session.query(User).filter(User.login == body.login).first()
-    if user and user.check_password(body.password):
-        login_user(user, remember=body.remember)
-        return AuthOut.from_orm(user)
-    raise NotFoundException
+basic_auth = HTTPBasicAuth()
+token_auth = HTTPTokenAuth(scheme='Bearer')
 
 
-@bp.route('/get_me')
-@validate(response_by_alias=True)
-@login_required
-def get_me():
-    return AuthOut.from_orm(current_user)
+@basic_auth.verify_password
+def verify_password(login, password):
+    user = User.query.filter_by(login=login).first()    
+    if user.check_password(password):
+        return user
 
 
-@bp.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return "logout"
+@basic_auth.error_handler
+def basic_auth_error():
+    raise Unauthorized
+
+
+@token_auth.error_handler
+def token_auth_error():
+    raise Unauthorized
+
+
+@token_auth.verify_token
+def verify_token(token):
+    current_user = User.check_token(token) if token else None
+    return current_user
+
+
+@bp.route("/token")
+@basic_auth.login_required
+def login():
+    user = basic_auth.current_user()
+    return jsonify(success=True, token=user.get_token())
+
+
+@bp.route('/token', methods=['DELETE'])
+@token_auth.login_required
+def revoke_token():
+    user = token_auth.current_user()
+    user.revoke_token()
+    return jsonify(success=True)

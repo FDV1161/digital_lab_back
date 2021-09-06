@@ -1,7 +1,6 @@
 from flask import Blueprint
 from flask_pydantic import validate
 from .shemas import RoomIn, RoomOut, RoomList
-from flask_login import login_required
 from .crud import RoomCRUD as Crud
 
 bp = Blueprint('room', __name__)

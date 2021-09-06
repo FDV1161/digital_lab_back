@@ -10,3 +10,8 @@ class UniqueException(Exception):
         self.model = model
         self.field = field
         self.item_id = item_id
+
+  
+
+class Unauthorized(Exception):  
+    pass

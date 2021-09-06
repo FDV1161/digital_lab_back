@@ -1,12 +1,14 @@
+from sqlalchemy.sql.elements import Null
 from database import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqla_softdelete import SoftDeleteMixin
 from sqlalchemy import Column, String, Integer, Text, DateTime, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declared_attr
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import UserMixin
 from enum import IntEnum
+import jwt
+from flask import current_app
 
 
 class GroupE(IntEnum):
@@ -44,7 +46,7 @@ class Group(SoftDeleteMixin, MyTimestampMixin, db.Model):
     name = Column(String(256), unique=True, nullable=False)
 
 
-class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
+class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
     __tablename__ = "user"
     __table_args__ = {"comment": "Пользователи"}
 
@@ -55,12 +57,13 @@ class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
     name = Column(String(256))
     surname = Column(String(256))
     patronymic = Column(String(256))
+    token = Column(String(256))
     group_id = Column(
         ForeignKey("group.id"),
         nullable=False,
         server_default=str(GroupE.viewer.value),
         default=str(GroupE.viewer.value)
-    )    
+    )
 
     group = relationship("Group")
 
@@ -69,6 +72,36 @@ class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def get_token(self):
+        payload = {
+            'exp': datetime.utcnow() + timedelta(days=1),
+            'iat': datetime.utcnow(),
+            'sub': self.id
+        }
+        token = jwt.encode(
+            payload,
+            current_app.config.get('SECRET_KEY'),            
+            algorithm='HS256'
+        )
+        self.token = token
+        db.session.add(self)
+        db.session.commit()
+        return self.token
+    
+    def revoke_token(self):
+        self.token = Null
+        db.session.add(self)
+        db.session.commit()
+    
+    @staticmethod
+    def check_token(token):
+        payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))        
+        user = User.query.get(payload['sub'])
+        if user.token == token:
+            return user
+        return None
+        
 
 
 class Room(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
