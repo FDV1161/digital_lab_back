@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_pydantic import validate
 from .shemas import RoomIn, RoomOut, RoomList
 from .crud import RoomCRUD as Crud
+from app.api.auth import token_auth
 
 bp = Blueprint('room', __name__)
 crud = Crud()
@@ -9,7 +10,7 @@ crud = Crud()
 
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
-# @login_required
+@token_auth.login_required
 def get_rooms():
     rooms, _ = crud.get_items()
     return RoomList.from_orm(rooms)
@@ -17,6 +18,7 @@ def get_rooms():
 
 @bp.route("/<item_id>", methods=["get"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def get_room(item_id: int):
     room = crud.get_item(item_id)
     return RoomOut.from_orm(room)
@@ -24,6 +26,7 @@ def get_room(item_id: int):
 
 @bp.route("", methods=["post"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def create_room(body: RoomIn):
     room = crud.create_item(body)
     return RoomOut.from_orm(room)
@@ -31,6 +34,7 @@ def create_room(body: RoomIn):
 
 @bp.route("/<item_id>", methods=["put"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def update_room(item_id: int, body: RoomIn):
     room = crud.update_item(item_id, body)
     return RoomOut.from_orm(room)
@@ -38,6 +42,7 @@ def update_room(item_id: int, body: RoomIn):
 
 @bp.route("/<item_id>", methods=["delete"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def delete_room(item_id: int):
     room = crud.delete_item(item_id)
     return {"object delete": room.id}

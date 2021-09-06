@@ -3,6 +3,8 @@ from flask import request, redirect, url_for, Blueprint, current_app
 # from werkzeug import secure_filename
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from app.api.auth import token_auth
+
 bp = Blueprint('file', __name__)
 
 
@@ -15,6 +17,7 @@ def allowed_file(filename):
 
 
 @bp.route('', methods=['GET', 'POST'])
+@token_auth.login_required
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']

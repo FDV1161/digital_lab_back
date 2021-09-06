@@ -4,13 +4,14 @@ from flask import Blueprint, request
 from flask_pydantic import validate
 from database import session, db
 from app.models import DeviceFunction, Device, Function, Room
-
+from app.api.auth import token_auth
 
 bp = Blueprint('home', __name__)
 
 
 @bp.route("/current_readings", methods=["get"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def get_devices():
     on_home_query = session.query(DeviceFunction, Device, Room, Function) \
         .join(Function, DeviceFunction.id_func == Function.id) \

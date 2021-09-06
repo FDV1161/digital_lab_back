@@ -1,1 +1,1 @@
-from .routers import bp
+from .routers import bp, token_auth

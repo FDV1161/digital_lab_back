@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_pydantic import validate
 from .shemas import FunctionIn, FunctionOut, FunctionList
 from .curd import FunctionCRUD as Crud
+from app.api.auth import token_auth
 
 bp = Blueprint('function', __name__)
 crud = Crud()
@@ -9,6 +10,7 @@ crud = Crud()
 
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def get_functions():
     functions, _ = crud.get_items()
     return FunctionList.from_orm(functions)
@@ -16,6 +18,7 @@ def get_functions():
 
 @bp.route("/<item_id>", methods=["get"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def get_function(item_id: int):
     function = crud.get_item(item_id)
     return FunctionOut.from_orm(function)
@@ -23,6 +26,7 @@ def get_function(item_id: int):
 
 @bp.route("", methods=["post"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def create_function(body: FunctionIn):
     function = crud.create_item(body)
     return FunctionOut.from_orm(function)
@@ -30,6 +34,7 @@ def create_function(body: FunctionIn):
 
 @bp.route("/<item_id>", methods=["put"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def update_function(item_id: int, body: FunctionIn):
     function = crud.update_item(item_id, body)
     return FunctionOut.from_orm(function)
@@ -37,6 +42,7 @@ def update_function(item_id: int, body: FunctionIn):
 
 @bp.route("/<item_id>", methods=["delete"])
 @validate(response_by_alias=True)
+@token_auth.login_required
 def delete_function(item_id: int):
     function = crud.delete_item(item_id)
     return {"object delete": function.id}
