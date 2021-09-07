@@ -3,6 +3,8 @@ from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 from flask import Blueprint
 from app.models import User
 from app.errors.Exception import Unauthorized
+from flask_pydantic import validate
+from .shemas import User as UserScheme
 
 bp = Blueprint('auth', __name__)
 
@@ -11,8 +13,10 @@ token_auth = HTTPTokenAuth(scheme='Bearer')
 
 
 @basic_auth.verify_password
-def verify_password(login, password):
-    user = User.query.filter_by(login=login).first()    
+def verify_password(username, password):
+    user = User.query.filter_by(login=username).first()
+    if not user:
+        raise Unauthorized
     if user.check_password(password):
         return user
 
@@ -46,3 +50,11 @@ def revoke_token():
     user = token_auth.current_user()
     user.revoke_token()
     return jsonify(success=True)
+
+
+@bp.route('/get_me')
+@token_auth.login_required
+@validate(response_by_alias=True)
+def get_me():
+    user = token_auth.current_user()
+    return UserScheme.from_orm(user)

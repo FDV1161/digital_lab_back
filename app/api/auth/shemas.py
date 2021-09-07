@@ -3,7 +3,20 @@ from app.api.base.shemas import OrmBaseModel
 from pydantic import Field
 
 
-class GroupOut(OrmBaseModel):    
+class Group(OrmBaseModel):
+    id: int
+    name: str
+
+
+class User(OrmBaseModel):
+    name: Optional[str]
+    surname: Optional[str]
+    patronymic: Optional[str]
+    login: str
+    group: Group
+
+
+class GroupOut(OrmBaseModel):
     id: int
     name: str
 
@@ -19,6 +32,6 @@ class AuthOut(OrmBaseModel):
     login: str
     group: GroupOut
 
- 
+
 # class AuthList(OrmBaseModel):
 #     __root__: List[AuthOut]
