@@ -5,7 +5,6 @@ from .journal_readings import bp as journal_readings_bp
 from .auth import bp as auth_bp
 from .file import bp as file_bp
 from .function import bp as function_bp
-from .current_readings import bp as current_readings_bp
 from .device_function import bp as device_function_bp
 from .home import bp as home_bp
 from .group import bp as group_bp

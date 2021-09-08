@@ -6,8 +6,7 @@ from .api import (
     journal_readings_bp,
     auth_bp,
     file_bp,
-    function_bp,
-    current_readings_bp,
+    function_bp,  
     device_function_bp,
     home_bp,
     group_bp,
@@ -39,7 +38,6 @@ app.register_blueprint(room_bp, url_prefix="/room")
 app.register_blueprint(device_bp, url_prefix="/device")
 app.register_blueprint(controller_bp, url_prefix="/controller")
 app.register_blueprint(journal_readings_bp, url_prefix="/journal_readings")
-app.register_blueprint(current_readings_bp, url_prefix="/current_readings")
 app.register_blueprint(device_function_bp, url_prefix="/device_functions")
 app.register_blueprint(function_bp, url_prefix="/function")
 app.register_blueprint(file_bp, url_prefix="/file")
