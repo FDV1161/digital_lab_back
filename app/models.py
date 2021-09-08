@@ -81,27 +81,26 @@ class User(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
         }
         token = jwt.encode(
             payload,
-            current_app.config.get('SECRET_KEY'),            
+            current_app.config.get('SECRET_KEY'),
             algorithm='HS256'
         )
         self.token = token
         db.session.add(self)
         db.session.commit()
         return self.token
-    
+
     def revoke_token(self):
         self.token = Null
         db.session.add(self)
         db.session.commit()
-    
+
     @staticmethod
     def check_token(token):
-        payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))        
+        payload = jwt.decode(token, current_app.config.get('SECRET_KEY'))
         user = User.query.get(payload['sub'])
         if user.token == token:
             return user
         return None
-        
 
 
 class Room(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
@@ -144,15 +143,6 @@ class Controller(SoftDeleteMixin, MyTimestampMixin, MyUserMixin, db.Model):
 class JournalReadings(SoftDeleteMixin, MyTimestampMixin, db.Model):
     __tablename__ = "journal_readings"
     __table_args__ = {"comment": "Журнал показаний датчиков"}
-
-    id = Column(Integer, primary_key=True)
-    value = Column(Float, nullable=False)
-    device_func_id = Column(ForeignKey("device_func.id"), nullable=False)
-
-
-class CurrentReadings(SoftDeleteMixin, MyTimestampMixin, db.Model):
-    __tablename__ = "current_readings"
-    __table_args__ = {"comment": "Текущие показания датчиков"}
 
     id = Column(Integer, primary_key=True)
     value = Column(Float, nullable=False)
