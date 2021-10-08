@@ -25,8 +25,8 @@ class JournalReadingsFilter(OrmBaseModel):
 
 
 class JournalReadingsPagination(OrmBaseModel):
-    paginate_page: Optional[int] = Field(default=1)
-    pagination_count: Optional[int] = Field(default=10)
+    paginate_page: Optional[int]
+    pagination_count: Optional[int]
 
 
 class JournalReadingsQuery(JournalReadingsFilter, JournalReadingsPagination):
