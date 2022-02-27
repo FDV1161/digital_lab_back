@@ -5,8 +5,9 @@ default:
   SECRET_KEY: 'this is secret key !!!'
   DEBUG: True
   HOST: '0.0.0.0'
-  SCRIPTS_FOLDER: '/home/dmitriy/Документы/projects/digital_lab_back/scripts'
+  SCRIPTS_FOLDER: '/home/dmitriy/Документы/projects/digital_lab_back/scripts/'
   SCRIPTS_INTERPRETER: 'python'
+  READINGS_SENDER_INTERVAL: 1
 development:  
 production:
   
