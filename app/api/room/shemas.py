@@ -20,3 +20,7 @@ class RoomDetailOut(RoomIn):
 
 class RoomList(OrmBaseModel):
     __root__: List[RoomOut]
+
+
+class RoomFilter(OrmBaseModel):
+    on_home: Optional[bool]

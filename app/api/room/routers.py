@@ -1,6 +1,6 @@
-from flask import Blueprint
+from flask import Blueprint, request
 from flask_pydantic import validate
-from .shemas import RoomIn, RoomOut, RoomList
+from .shemas import RoomIn, RoomOut, RoomList, RoomFilter
 from .crud import RoomCRUD as Crud
 from app.api.auth import token_auth
 
@@ -10,9 +10,10 @@ crud = Crud()
 
 @bp.route("", methods=["get"])
 @validate(response_by_alias=True)
-@token_auth.login_required
+# @token_auth.login_required
 def get_rooms():
-    rooms, _ = crud.get_items()
+    filters = RoomFilter.parse_obj(request.args)
+    rooms, _ = crud.get_items(filters=filters)
     return RoomList.from_orm(rooms)
 
 
