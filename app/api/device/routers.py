@@ -1,9 +1,10 @@
 from flask import Blueprint, request
 from flask_pydantic import validate
-from .shemas import DeviceOut, DeviceList, DeviceIn
-from ..file.utils import upload_file
-from .crud import DeviceCRUD as Crud
+
 from app.api.auth import token_auth
+from .crud import DeviceCRUD as Crud
+from .shemas import DeviceOut, DeviceList, DeviceIn, DeviceFilter
+from ..file.utils import upload_file
 
 bp = Blueprint('device', __name__)
 crud = Crud()
@@ -13,7 +14,8 @@ crud = Crud()
 @validate(response_by_alias=True)
 @token_auth.login_required
 def get_devices():
-    devices, _ = crud.get_items()
+    filters = DeviceFilter.parse_obj(request.args)
+    devices, _ = crud.get_items(filters=filters)
     return DeviceList.from_orm(devices)
 
 

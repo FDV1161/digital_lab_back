@@ -1,13 +1,7 @@
-import os
 from typing import List
-from flask import url_for
-from flask import current_app
-from pydantic import validator
-
-from app.api.base.shemas import OrmBaseModel
-
 from typing import Optional
 
+from app.api.base.shemas import OrmBaseModel
 from app.api.device_function.shemas import DeviceFunctionList
 
 
@@ -32,3 +26,7 @@ class DeviceOut(DeviceIn):
 
 class DeviceList(OrmBaseModel):
     __root__: List[DeviceOut]
+
+
+class DeviceFilter(OrmBaseModel):
+    on_home: Optional[bool]

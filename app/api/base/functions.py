@@ -1,21 +1,24 @@
-from flask_sqlalchemy import Pagination
-from sqlalchemy.sql.elements import Null
-from database import session, db
-from app.errors.Exception import NotFoundException, UniqueException
-from app.api.base.shemas import OrmBaseModel
+from typing import Dict
+
 from sqlalchemy import or_
+from sqlalchemy.sql.elements import Null
+
+from app.api.base.shemas import OrmBaseModel
+from app.errors.Exception import NotFoundException, UniqueException
+from database import session, db
 
 
 class BaseCRUD:
     model: db.Model = None
-    foreign_keys = None
-    filter = None    
+    use_pagination: bool = False
+    foreign_keys: Dict[str, db.Model] = None
+    filter = None
 
     @staticmethod
     def _get_item(model, item_id):
         item = session.query(model).get(item_id)
         if not item:
-            raise NotFoundException
+            raise NotFoundException(model=model)
         return item
 
     def _check_unique(self, data, item_id=None):
@@ -26,10 +29,9 @@ class BaseCRUD:
         ]
         if not unique_param:
             return
-        item = session.query(self.model).filter(or_(*unique_param),
-                                                self.model.id != item_id).limit(1).scalar()
+        item = session.query(self.model).filter(or_(*unique_param), self.model.id != item_id).first()
         if item:
-            raise UniqueException
+            raise UniqueException(model=self.model)
 
     def _check_exist_foreignkey(self, data):
         if not self.foreign_keys:
@@ -44,20 +46,26 @@ class BaseCRUD:
                 else:
                     self._get_item(foreign_key_model, foreign_key_id)
 
+    def _filter_items(self, stmt, filters):
+        if self.filter:
+            return self.filter().filter_query(stmt, filters.dict(exclude_unset=True))
+        return stmt
+
+    def _paginate_items(self, stmt, page=1, count=10):
+        if self.use_pagination:
+            return stmt.paginate(page, count, False).items, stmt.count()
+        return stmt.all(), stmt.count()
+
     def data_verify(self, data: OrmBaseModel, item_id=Null):
         data = data.dict(exclude_unset=True)
         self._check_unique(data, item_id=item_id)
         self._check_exist_foreignkey(data)
         return data
 
-    def get_items(self, filters: OrmBaseModel = None, page=1, count=10):        
-        if self.filter:
-            items = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True))
-            row_count = self.filter().filter_query(self.model.query, filters.dict(exclude_unset=True)).count()
-        else:
-            items = session.query(self.model)
-            row_count = session.query(self.model).count()
-        return items.paginate(page, count, False).items, row_count
+    def get_items(self, filters: OrmBaseModel = None, page=1, count=10):
+        stmt = session.query(self.model)
+        stmt = self._filter_items(stmt, filters)
+        return self._paginate_items(stmt, page, count)
 
     def get_item(self, item_id: int):
         return self._get_item(self.model, item_id)

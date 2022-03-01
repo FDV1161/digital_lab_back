@@ -11,7 +11,6 @@ class UniqueException(Exception):
         self.field = field
         self.item_id = item_id
 
-  
 
-class Unauthorized(Exception):  
+class Unauthorized(Exception):
     pass
