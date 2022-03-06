@@ -22,10 +22,12 @@ class ReadingsSender(Namespace):
         def background_sender(socketio):
             ct = currentThread()
             while getattr(ct, "is_run", True):
-                cur_vals = db.session.query(DeviceFunction).all()
-                device_function_values = DeviceFunctionValues.from_orm(cur_vals)
-                socketio.send(device_function_values.dict()["__root__"], broadcast=True)
-                sleep(current_app.config['READINGS_SENDER_INTERVAL'])
+                Session = db.create_session({})
+                with Session() as session:
+                    cur_vals = session.query(DeviceFunction).all()
+                    device_function_values = DeviceFunctionValues.from_orm(cur_vals)
+                    socketio.send(device_function_values.dict()["__root__"], broadcast=True)
+                    sleep(current_app.config['READINGS_SENDER_INTERVAL'])
 
         self.__connected_count += 1
         if self.__rs_thread is None:
