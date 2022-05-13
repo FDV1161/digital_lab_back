@@ -46,7 +46,7 @@ app.register_blueprint(group_bp, url_prefix="/group")
 app.register_blueprint(users_bp, url_prefix="/users")
 app.register_blueprint(auth_bp)
 
-socketio.on_namespace(ReadingsSender())
+# socketio.on_namespace(ReadingsSender())
 
 
 @app.route("/static/<filename>")
