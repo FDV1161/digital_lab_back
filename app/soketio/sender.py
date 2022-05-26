@@ -1,3 +1,4 @@
+from datetime import datetime
 from threading import Thread, currentThread
 from time import sleep
 
@@ -6,7 +7,14 @@ from flask import copy_current_request_context, current_app
 from flask_socketio import Namespace
 
 from app.models import DeviceFunction
-from .schemas import DeviceFunctionValues
+from .schemas import DeviceFunctionValue
+
+
+def get_max_updated_at(device_functions, current_date):
+    if not device_functions:
+        return current_date
+    max_date = max(device_functions, key=lambda df: df.updated_at)
+    return max_date.updated_at or current_date
 
 
 class ReadingsSender(Namespace):
@@ -21,12 +29,17 @@ class ReadingsSender(Namespace):
         @copy_current_request_context
         def background_sender(socketio):
             ct = currentThread()
+            last_select = datetime.now()
+            Session = db.create_scoped_session()
+            # Session = db.create_session({})
             while getattr(ct, "is_run", True):
-                Session = db.create_session({})
                 with Session() as session:
-                    cur_vals = session.query(DeviceFunction).all()
-                    device_function_values = DeviceFunctionValues.from_orm(cur_vals)
-                    socketio.send(device_function_values.dict()["__root__"], broadcast=True)
+                    device_functions = session.query(DeviceFunction).filter(
+                        DeviceFunction.updated_at > last_select).all()
+                    last_select = get_max_updated_at(device_functions, last_select)
+                    for device_function in device_functions:
+                        value = DeviceFunctionValue.from_orm(device_function)
+                        socketio.send(value.dict(), broadcast=True)
                     sleep(current_app.config['READINGS_SENDER_INTERVAL'])
 
         self.__connected_count += 1
