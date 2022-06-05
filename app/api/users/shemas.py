@@ -40,14 +40,14 @@ class UserCreate(User):
 
 class UserUpdate(User):
     password: Optional[str]
-    confirm_passwor: Optional[str]
+    confirm_password: Optional[str]
 
     @root_validator
     def check_passwords_match(cls, values):
-        pw1, pw2 = values.get('password'), values.get('confirm_passwor')
-        if pw1 is not None and pw2 is not None and pw1 != pw2:
+        pw1, pw2 = values.get('password'), values.get('confirm_password')
+        if pw1 is not None and pw1 != pw2:
             raise ValueError('passwords do not match')
-        values.pop("confirm_passwor")
+        values.pop("confirm_password")
         return values
 
 
