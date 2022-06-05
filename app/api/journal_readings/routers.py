@@ -1,8 +1,12 @@
-from flask import Blueprint, make_response, send_file
+from flask import Blueprint, make_response
 from flask_pydantic import validate
-from app.models import JournalReadings
-from .shemas import JournalReadingsList, JournalReadingsOut, JournalReadingsIn, JournalReadingsQuery, JournalReadingsFilter
-from database import session
+from .shemas import (
+    JournalReadingsList,
+    JournalReadingsOut,
+    JournalReadingsIn,
+    JournalReadingsQuery,
+    JournalReadingsFilter
+)
 from .crud import JournalReadingsCRUD as Crud
 from app.api.auth import token_auth
 from io import StringIO
@@ -12,7 +16,7 @@ bp = Blueprint('journal_readings', __name__)
 crud = Crud()
 
 
-@bp.route('/export_csv/', methods=["get"])
+@bp.route('/export_csv', methods=["get"])
 @validate(response_by_alias=True)
 @token_auth.login_required
 def export_csv(query: JournalReadingsQuery):
@@ -46,4 +50,11 @@ def get_journal_readings(query: JournalReadingsQuery):
     filters = JournalReadingsFilter.parse_obj(query.dict())
     journal_readings, row_count = crud.get_items(
         filters=filters, page=query.paginate_page, count=query.pagination_count)
-    return JournalReadingsList(values=journal_readings, row_count=row_count)
+    min_value, avg_value, max_value = crud.get_statistics(filters)
+    return JournalReadingsList(
+        values=journal_readings,
+        row_count=row_count,
+        max_value=max_value,
+        avg_value=avg_value,
+        min_value=min_value
+    )

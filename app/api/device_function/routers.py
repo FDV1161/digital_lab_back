@@ -9,6 +9,14 @@ bp = Blueprint('device_function', __name__)
 crud = Crud()
 
 
+@bp.route("/<item_id>", methods=["get"])
+@validate(response_by_alias=True)
+@token_auth.login_required
+def get_device_function(item_id: int):
+    item = crud.get_item(item_id)
+    return DeviceFunctionOut.from_orm(item)
+
+
 @bp.route("", methods=["post"])
 @validate(response_by_alias=True)
 @token_auth.login_required
