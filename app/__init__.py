@@ -28,6 +28,8 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 FlaskDynaconf(app, settings_files=["settings.yaml", ".secrets.yaml"])
 CORS(app, support_credentials=True)
 
+app.url_map.strict_slashes = False
+
 db.init_app(app)
 migrate = Migrate(app, db)
 manager = Manager(app)
